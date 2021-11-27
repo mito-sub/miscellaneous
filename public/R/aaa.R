@@ -43,22 +43,27 @@ correlate(df)
 res.true = lm(y~x1+x3+z, data = df)
 summary(res.true) # 当然、介入効果(zの係数)はほとんど正しく推定されている
 
+# full model(x1 ~ x4, zをふくめたモデル)
 res.full = lm(y~., data = df)
-summary(res.full)
+summary(res.full) 
+# 目的変数と割当に関係ない変数x2,目的変数に関係ない変数を含めた場合だが、
+# そこまで因果効果が歪んでない
+# -> 色々含めるのは悪くない
+
+#--- では、必要な変数を含めないとどうなるのか見ていく ---#
 # 割当Zとは相関の弱いx3を抜いたモデル
-res = lm(y~x1+x2+z, data=df)
-summary(res) # 割当の効果(zの係数)が小さめに推定されているがそこまで歪んでいるわけではない
+res = lm(y~x1+x4+z, data=df)
+summary(res) # 割当の効果(zの係数)が大きめに推定されているがそこまで歪んでいるわけではない
+
 
 ## 割当Zと目的変数Yの両方と相関が強いx1を抜く
-res = lm(y~x2 + x3 + z, data = df)
+res = lm(y~x3 + x4+ z, data = df)
 summary(res) # すっごい過大に割当の効果が推定された
 
-## ## 割当Zと目的変数Yの両方と相関が強いx2を抜く
+## ## 目的変数Yとは相関が弱いx4を抜く(=正しいモデル)
 res = lm(y~x1 + x3 + z, data = df)
-summary(res) ## これも大きめに推定されている
+summary(res) ## 当然正しく推定されている
 
-res = lm(y ~ x3 + z, data = df)
-summary(res) ## これも大きめに推定されている
 
 
 ## 割当と目的変数の両方に相関する変数を抜くとバイアスが大きくなる
